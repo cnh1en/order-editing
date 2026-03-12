@@ -1,4 +1,8 @@
 #!/bin/bash
+# ============================================================
+# LOCAL DEVELOPMENT ONLY — used by `shopify app dev` via shopify.web.toml
+# Do NOT use this script in production.
+# ============================================================
 # Shopify CLI injects: BACKEND_PORT, SHOPIFY_API_KEY, SHOPIFY_API_SECRET, SCOPES, HOST
 # This script syncs those values into Backend's .env file, then boots artisan.
 
