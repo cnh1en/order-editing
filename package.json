@@ -20,7 +20,8 @@
     "config:use": "shopify app config use",
     "generate": "shopify app generate",
     "env": "shopify app env",
-    "shopify": "shopify"
+    "shopify": "shopify",
+    "gen:types": "pnpm --filter @customix/shared gen:types"
   },
   "overrides": {
     "p-map": "^4.0.0"
