@@ -1,10 +1,9 @@
-import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
+import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
-import { authenticate } from "../shopify.server";
-import { boundary } from "@shopify/shopify-app-react-router/server";
+import { authenticate } from "../auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session } = await authenticate.admin(request);
+  const { session } = await authenticate(request);
 
   return {
     shop: session.shop,
@@ -12,8 +11,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function Index() {
-  // const { shop } = useLoaderData<typeof loader>();
-  const shop = "example-shop";
+  const { shop } = useLoaderData<typeof loader>();
 
   return (
     <s-page heading="Order Editing">
@@ -37,7 +35,7 @@ export default function Index() {
         </s-paragraph>
         <s-paragraph>
           <s-text>Session: </s-text>
-          Remote Session Storage (Laravel API)
+          JWT-based auth via Laravel API
         </s-paragraph>
       </s-section>
 
@@ -66,7 +64,3 @@ export default function Index() {
     </s-page>
   );
 }
-
-export const headers: HeadersFunction = (headersArgs) => {
-  return boundary.headers(headersArgs);
-};
