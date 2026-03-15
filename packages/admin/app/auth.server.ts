@@ -1,7 +1,5 @@
 export interface ShopSession {
   shop: string;
-  scope: string;
-  installed_at: string;
 }
 
 interface ErrorResponse {
@@ -11,16 +9,8 @@ interface ErrorResponse {
   };
 }
 
-interface InstallResponse {
-  data: {
-    shop: ShopSession;
-    shop_info: Record<string, string> | null;
-  };
-}
-
-const BACKEND_URL = (
-  process.env.BACKEND_URL || "http://localhost:63109"
-).replace(/\/$/, "");
+const BACKEND_URL =
+  `http://localhost:${process.env.BACKEND_PORT || "8000"}`.replace(/\/$/, "");
 
 /**
  * Authenticate an SSR request by extracting the Shopify session token.
@@ -57,37 +47,15 @@ export async function authenticate(
   }
 
   // Parse the error response to decide next action
-  const errorJson: ErrorResponse = await verifyResponse.json();
-
-  // Only trigger install when shop doesn't exist yet
-  if (errorJson.error.code === "SHOP_NOT_FOUND") {
-    return installShop(idToken);
+  let errorJson: ErrorResponse;
+  try {
+    errorJson = await verifyResponse.json();
+  } catch {
+    throw new Response("Authentication failed", { status: 401 });
   }
 
   // Any other auth error (invalid token, expired session) — reject
   throw new Response(errorJson.error.message, { status: 401 });
-}
-
-async function installShop(
-  sessionToken: string,
-): Promise<{ session: ShopSession }> {
-  const installResponse = await fetch(`${BACKEND_URL}/api/shop/install`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify({ session_token: sessionToken }),
-  });
-
-  if (!installResponse.ok) {
-    const body = await installResponse.text();
-    console.error(`Install failed (${installResponse.status}): ${body}`);
-    throw new Response("Installation failed", { status: 401 });
-  }
-
-  const installJson: InstallResponse = await installResponse.json();
-  return { session: installJson.data.shop };
 }
 
 function extractBearerToken(header: string | null): string | null {

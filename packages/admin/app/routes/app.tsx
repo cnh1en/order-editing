@@ -5,9 +5,9 @@ import { useEffect } from "react";
 import { authenticate } from "../auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate(request);
+  const { session } = await authenticate(request);
 
-  return { apiKey: process.env.SHOPIFY_API_KEY || "" };
+  return { session, apiKey: process.env.SHOPIFY_API_KEY || "" };
 };
 
 export default function App() {

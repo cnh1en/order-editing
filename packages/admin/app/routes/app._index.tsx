@@ -1,17 +1,8 @@
-import type { LoaderFunctionArgs } from "react-router";
-import { useLoaderData } from "react-router";
-import { authenticate } from "../auth.server";
-
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session } = await authenticate(request);
-
-  return {
-    shop: session.shop,
-  };
-};
+import { useSession } from "../hooks/useSession";
 
 export default function Index() {
-  const { shop } = useLoaderData<typeof loader>();
+  const { session } = useSession();
+  const shop = session.shop;
 
   return (
     <s-page heading="Order Editing">

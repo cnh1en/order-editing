@@ -1,6 +1,7 @@
 name = "Backend"
 roles = ["backend"]
-webhooks_path = "/webhooks/app/uninstalled"
+
+port = 8000
 
 [commands]
 dev = "bash start.sh"
